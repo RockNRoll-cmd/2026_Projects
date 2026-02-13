@@ -1,2 +1,4 @@
 # 2026_Projects
-TODO
+//Starting new Repo - for practice with CPP Simulator / Test Stimulus Plugins
+//Python - Utility Scripts
+//CUDA Practice
