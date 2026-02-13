@@ -65,7 +65,7 @@ int main() {
     
     // Test memory operations
     std::cout << "\n5. Testing memory operations..." << std::endl;
-    uint32_t test_addr = 0x1000;
+    uint32_t test_addr = 0x100;  // Within 4KB range
     uint32_t test_data = 0xDEADBEEF;
     
     cpu.write_memory(test_addr, test_data);
