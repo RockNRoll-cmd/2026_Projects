@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "validation-verification-tools"
+version = "1.0.0"
+description = "A project demonstrating validation and verification tools for DevOps"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "pytest-xdist>=3.5.0",
+    "flake8>=7.0.0",
+    "pylint>=3.0.0",
+    "black>=24.0.0",
+    "isort>=5.13.0",
+    "mypy>=1.8.0",
+    "bandit>=1.7.0",
+    "safety>=3.0.0",
+    "pip-audit>=2.6.0",
+    "radon>=6.0.0",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q --strict-markers --cov=src --cov-report=term-missing"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.tox
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+include_trailing_comma = true
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+[tool.pylint.messages_control]
+disable = [
+    "C0111",  # missing-docstring
+    "R0903",  # too-few-public-methods
+]
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/test_*.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

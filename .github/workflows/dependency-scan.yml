@@ -1,0 +1,61 @@
+name: Dependency Scan
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'requirements.txt'
+      - 'pyproject.toml'
+      - 'setup.py'
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-scan:
+    name: Scan Dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install pip-audit safety
+        
+    - name: Run pip-audit
+      run: |
+        echo "=== Pip Audit Results ==="
+        pip-audit --desc || true
+        
+    - name: Run Safety check
+      run: |
+        echo "=== Safety Check Results ==="
+        safety check --full-report || true
+        
+    - name: Create dependency report
+      run: |
+        echo "Dependency scan completed at $(date)" > dependency-scan-report.txt
+        echo "" >> dependency-scan-report.txt
+        pip list >> dependency-scan-report.txt
+        
+    - name: Upload dependency report
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependency-scan-report
+        path: dependency-scan-report.txt
+      if: always()
