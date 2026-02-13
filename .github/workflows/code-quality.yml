@@ -1,0 +1,48 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install quality tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install radon mccabe vulture
+        
+    - name: Run Radon (code complexity)
+      run: |
+        echo "=== Cyclomatic Complexity ==="
+        radon cc src/ -a -nb || true
+        echo ""
+        echo "=== Maintainability Index ==="
+        radon mi src/ -nb || true
+        echo ""
+        echo "=== Raw Metrics ==="
+        radon raw src/ -s || true
+      continue-on-error: true
+      
+    - name: Run Vulture (dead code detection)
+      run: vulture src/ --min-confidence 80 || true
+      continue-on-error: true
+      
+    - name: Quality Check Summary
+      run: |
+        echo "Code quality checks completed"
+        echo "Review the output above for any issues"
