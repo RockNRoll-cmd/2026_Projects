@@ -12,10 +12,15 @@ on:
       - 'pyproject.toml'
       - 'setup.py'
 
+permissions:
+  contents: read
+
 jobs:
   dependency-scan:
     name: Scan Dependencies
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
     - name: Checkout code
