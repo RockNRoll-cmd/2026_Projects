@@ -47,9 +47,13 @@ class uart_driver extends uvm_driver #(uart_transaction);
   `uvm_component_utils(uart_driver)
   
   virtual uart_if vif;
+  int cached_baud_rate;
+  int cached_bit_time;
   
   function new(string name = "uart_driver", uvm_component parent = null);
     super.new(name, parent);
+    cached_baud_rate = 0;
+    cached_bit_time = 0;
   endfunction
   
   virtual function void build_phase(uvm_phase phase);
@@ -69,7 +73,13 @@ class uart_driver extends uvm_driver #(uart_transaction);
   
   virtual task transmit_byte(uart_transaction trans);
     int bit_time;
-    bit_time = 1000000000 / trans.baud_rate;  // in ns
+    
+    // Cache bit time calculation
+    if (cached_baud_rate != trans.baud_rate) begin
+      cached_baud_rate = trans.baud_rate;
+      cached_bit_time = 1000000000 / trans.baud_rate;  // in ns
+    end
+    bit_time = cached_bit_time;
     
     // Start bit
     vif.tx <= 1'b0;
@@ -111,9 +121,15 @@ class uart_monitor extends uvm_monitor;
   bit parity_enable = 0;
   bit parity_odd = 0;
   
+  // Cached bit time
+  int cached_baud_rate;
+  int cached_bit_time;
+  
   function new(string name = "uart_monitor", uvm_component parent = null);
     super.new(name, parent);
     analysis_port = new("analysis_port", this);
+    cached_baud_rate = 0;
+    cached_bit_time = 0;
   endfunction
   
   virtual function void build_phase(uvm_phase phase);
@@ -143,7 +159,12 @@ class uart_monitor extends uvm_monitor;
     int bit_time;
     bit sample_bit;
     
-    bit_time = 1000000000 / trans.baud_rate;  // in ns
+    // Cache bit time calculation
+    if (cached_baud_rate != trans.baud_rate) begin
+      cached_baud_rate = trans.baud_rate;
+      cached_bit_time = 1000000000 / trans.baud_rate;  // in ns
+    end
+    bit_time = cached_bit_time;
     
     // Wait for start bit (falling edge)
     @(negedge vif.rx);

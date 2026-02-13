@@ -45,6 +45,8 @@ int main() {
     // Write instruction to memory
     std::cout << "\n3. Loading test program to memory..." << std::endl;
     // Simple ADD instruction: R4 = R1 + R2
+    // Instruction format (MIPS-style): 
+    //   [31:26] opcode=0x00, [25:21] rs=R1, [20:16] rt=R2, [15:11] rd=R4, [10:6] shamt=0, [5:0] funct=0x20
     uint32_t add_instruction = 0x00221820;  // ADD R4, R1, R2
     cpu.write_memory(0, add_instruction);
     

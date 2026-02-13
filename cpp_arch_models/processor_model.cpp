@@ -80,7 +80,7 @@ void ProcessorModel::write_register(uint8_t reg_id, uint32_t value) {
 }
 
 uint32_t ProcessorModel::read_memory(uint32_t addr) const {
-    if (addr >= MEMORY_SIZE - 3) {
+    if (addr > MEMORY_SIZE - 4) {
         throw std::out_of_range("Memory address out of range");
     }
     
@@ -95,7 +95,7 @@ uint32_t ProcessorModel::read_memory(uint32_t addr) const {
 }
 
 void ProcessorModel::write_memory(uint32_t addr, uint32_t value) {
-    if (addr >= MEMORY_SIZE - 3) {
+    if (addr > MEMORY_SIZE - 4) {
         throw std::out_of_range("Memory address out of range");
     }
     

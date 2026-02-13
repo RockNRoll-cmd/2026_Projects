@@ -8,7 +8,7 @@ class uvm_base_scoreboard #(type T = uvm_sequence_item) extends uvm_scoreboard;
   
   `uvm_component_param_utils(uvm_base_scoreboard #(T))
   
-  // Analysis imports
+  // Analysis import (named export for convention but it's an import port)
   uvm_analysis_imp #(T, uvm_base_scoreboard #(T)) analysis_export;
   
   // Queues for expected and actual transactions
